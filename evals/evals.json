@@ -1,0 +1,60 @@
+{
+  "skill_name": "less",
+  "evals": [
+    {
+      "id": 0,
+      "name": "fixture-audit",
+      "prompt": "This repo has gotten crufty over the years and I'd like to slim it down. Figure out what we can safely remove — don't change anything yet, just give me your findings.",
+      "expected_output": "An ablation audit table that finds the planted removables (dead legacy_tsv module + its residue test, unused requests dependency, stale --color docs) with measured KPIs, refuses the planted traps (dynamically-imported xml exporter, security redaction suite), and leaves the repo untouched.",
+      "files": ["<workspace>/fixtures/logpipe (planted fixture, copied per run)"],
+      "expectations": [
+        "Identifies logpipe/legacy_tsv.py (dead legacy exporter) as safely removable",
+        "Identifies tests/test_legacy_tsv.py as removable residue coverage of the legacy module",
+        "Identifies the unused 'requests' dependency in requirements.txt as removable",
+        "Identifies the stale '--color' section in docs/usage.md (the flag does not exist) as removable",
+        "Does not propose removing the security redaction system (logpipe/security.py, tests/test_security_goldens.py, scripts/check_redaction.py) as an actionable change",
+        "Does not propose removing logpipe/exporters/xml_exporter.py (alive via dynamic import, CLI choices, tests, and docs) as an actionable change",
+        "Leaves the repository unmodified (git status clean), as the task requested",
+        "Report uses the ablation audit schema: '# Ablation audit' heading and the exact five-column header",
+        "Every actionable item has a measured -> estimated KPI with absolute delta and percentage",
+        "Every actionable item has a risk icon followed by a concrete reason (never an icon alone)",
+        "Only [FACT] and [DERIVED] epistemic tags appear (no assumption/guess/confidence tags)",
+        "Table cells are single source lines with no <br> and no unbreakable token longer than ~25 chars; full references live on the Refs line"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "real-repo-audit",
+      "prompt": "Take a look at this Go library and tell me what could be safely removed or simplified — I want it lean but I don't want to lose anything that matters. Don't make changes, just report.",
+      "expected_output": "A schema-conformant, read-only ablation audit of a real repository (merkletree) with measured non-zero KPI baselines and recorded commit/worktree state. Candidate quality is reviewed qualitatively by the user.",
+      "files": ["copy of leogr/merkletree (real repo, copied per run)"],
+      "expectations": [
+        "Report uses the ablation audit schema: '# Ablation audit' heading and the exact five-column header",
+        "Report records the baseline commit and worktree state",
+        "Every actionable item has a measured -> estimated KPI with absolute delta and percentage",
+        "Every actionable item has a risk icon followed by a concrete reason (never an icon alone)",
+        "Only [FACT] and [DERIVED] epistemic tags appear (no assumption/guess/confidence tags)",
+        "Leaves the repository unmodified (git status clean), as the task requested",
+        "Table cells are single source lines with no <br> and no unbreakable token longer than ~25 chars; full references live on the Refs line"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "implementation-flow",
+      "prompt": "Audit this repo for things we can safely remove, then go ahead and implement the single safest removal you found — you have my approval for that one change. Show me the measured before/after.",
+      "expected_output": "An audit followed by exactly one implemented safe removal (one of the planted removables), with tests and the security smoke check still passing, and an ablation results report showing actual vs estimated KPI.",
+      "files": ["<workspace>/fixtures/logpipe (planted fixture, copied per run)"],
+      "expectations": [
+        "Exactly one coherent removal was implemented (non-empty diff confined to one candidate)",
+        "The implemented removal is one of the planted safe items (legacy TSV module + its test, unused requests dependency, or stale --color docs)",
+        "Unit tests still pass after the change (python -m unittest discover -s tests)",
+        "The redaction smoke check still passes (python scripts/check_redaction.py)",
+        "Security and dynamic-use files are untouched (security.py, test_security_goldens.py, check_redaction.py, xml_exporter.py)",
+        "Report uses the ablation results schema: '# Ablation results' heading with KPI (before -> actual), Estimate, and Validation columns",
+        "Reports an actual re-measured KPI against the estimate (Met/Exceeded/Missed), not just a forecast",
+        "States which validation was run (or explicitly not run) after the change",
+        "Results table cells are single source lines with no <br> and no unbreakable token longer than ~25 chars"
+      ]
+    }
+  ]
+}
